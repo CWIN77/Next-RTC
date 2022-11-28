@@ -10,9 +10,8 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const server = express();
 
-  server.get("/getRequest", (req, res) => {
-    console.log("hello");
-    res.send("getRequest");
+  server.get("/deadcall", (req, res) => {
+    res.send("deadcall");
   });
 
   server.all("*", (req, res) => handle(req, res));
