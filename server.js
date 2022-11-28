@@ -1,5 +1,7 @@
-const express = require("express");
+const express = require("express")();
 const next = require("next");
+const SocketIO = require('socket.io');
+const http = require('http').createServer(express);
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = 4000;
@@ -8,13 +10,15 @@ const app = next({ dev, port });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
-  const server = express();
+  const expressServer = express();
+  const httpServer = server.createServer(expressServer);
+  const io = SocketIO(httpServer);
 
-  server.get("/deadcall", (req, res) => {
+  expressServer.get("/deadcall", (req, res) => {
     res.send("deadcall");
   });
 
-  server.all("*", (req, res) => handle(req, res));
+  expressServer.all("*", (req, res) => handle(req, res));
 
-  server.listen(port, (err) => console.log(`Server listening : http://localhost:${port}`));
+  expressServer.listen(port, (err) => console.log(`Server listening : http://localhost:${port}`));
 });
